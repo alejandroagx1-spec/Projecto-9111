@@ -1,0 +1,311 @@
+<title>AGX Proyecto 911</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: app de una columna (máx. 760px) con 4 vistas y navegación inferior fija. Un solo mundo visual oscuro, cian como acento, verde solo para avance. */
+:root{
+  --bg:#080a0f; --panel:#111722; --panel2:#171f2b; --line:#293446;
+  --text:#f4f6fb; --muted:#9aa6b8; --cyan:#54d7f5; --green:#b8f36b; --amber:#ffb45e; --red:#ff7a7a;
+  --display:'Space Grotesk',system-ui,Arial,sans-serif; --body:'Inter',system-ui,Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 85% -8%,#15293b,transparent 40%),var(--bg);color:var(--text);font:15px/1.5 var(--body);padding-block:18px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;gap:12px;align-items:center;min-width:0}
+.mark{width:44px;height:44px;flex:none;border:1px solid var(--cyan);border-radius:12px;display:grid;place-items:center;color:var(--cyan);font:700 17px var(--display)}
+.k{font-size:11px;letter-spacing:.14em;color:var(--cyan);font-weight:600;text-transform:uppercase}
+h1{margin:0;font:700 20px var(--display);letter-spacing:.04em}
+.sub,.muted{color:var(--muted)}.sub{font-size:12px}
+.pill{border:1px solid #3b5260;border-radius:99px;padding:5px 11px;color:var(--green);font-size:12px;white-space:nowrap}
+h2{font:700 clamp(26px,6vw,38px)/1.08 var(--display);letter-spacing:-.03em;margin:22px 0 8px;text-wrap:balance}
+h3{font:700 19px var(--display);margin:0}
+h4{font:700 17px var(--display);margin:0}
+.view{display:none;padding-top:6px}.view.on{display:block}
+.card{background:linear-gradient(145deg,#151b26,#0f131b);border:1px solid var(--line);border-radius:16px;padding:18px}
+.stack{display:grid;gap:12px}
+.sec{margin:26px 0 12px;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec p{margin:0;font-size:12px;color:var(--muted)}
+/* meta */
+.goal .big{font:700 clamp(28px,8vw,40px) var(--display);letter-spacing:-.03em;margin:2px 0 12px}
+.label{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.track{height:12px;border-radius:20px;background:#252e3d;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:20px;transition:width .35s}
+.row{display:flex;justify-content:space-between;gap:10px;margin-top:9px;font-size:13px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+.stat span{display:block;color:var(--muted);font-size:12px}
+.stat strong{display:block;font:700 22px var(--display);margin-top:2px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.goalstep{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.goalstep b{font:700 22px var(--display)}
+/* negocios */
+.biz{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.biz article{min-width:0}
+.tag{font-size:10px;color:var(--cyan);letter-spacing:.12em;font-weight:600}
+.biz h4{margin:6px 0}
+.biz p{color:var(--muted);font-size:13px;margin:0 0 8px}
+.biz ul{padding-left:18px;margin:0;font-size:13px}.biz li{margin:4px 0}
+/* fases */
+.phase{margin-bottom:10px}
+.ph{display:flex;gap:11px;align-items:center}
+.num{width:34px;height:34px;flex:none;border-radius:10px;background:#1d2b38;color:var(--cyan);display:grid;place-items:center;font:700 14px var(--display)}
+.num.done{background:var(--green);color:#0b1405}
+.ph .meta{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+.desc{color:var(--muted);font-size:13px;margin:8px 0 12px}
+.tasks{display:grid;gap:8px}
+.task{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.task input{accent-color:var(--green);margin-top:4px;width:16px;height:16px;flex:none}
+.task input:checked+span{color:var(--muted);text-decoration:line-through}
+/* finanzas */
+.fields{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.f{min-width:0}.f.wide{grid-column:1/-1}
+.f label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+input[type=number],input[type=text],select,textarea{width:100%;background:#090d14;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px;font:inherit;font-size:16px}
+textarea{min-height:90px;font-size:12px}
+button{border:1px solid var(--line);background:#1a2431;color:var(--text);padding:10px 14px;border-radius:10px;font:600 14px var(--body);cursor:pointer}
+button.primary{background:var(--cyan);color:#061018;border-color:var(--cyan)}
+button.danger{color:var(--red);border-color:#5a3535}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.seg{display:flex;gap:6px}
+.seg button{flex:1}.seg button.sel{background:var(--cyan);color:#061018;border-color:var(--cyan)}
+.led{list-style:none;margin:0;padding:0}
+.led li{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid var(--line)}
+.led li:first-child{border-top:0}
+.led .d{min-width:0}.led .d b{display:block;font-weight:500;overflow-wrap:anywhere}.led .d small{color:var(--muted)}
+.amt{font:700 16px var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.amt.in{color:var(--green)}.amt.out{color:var(--red)}
+.x{padding:4px 9px;font-size:12px}
+.note{border-left:3px solid var(--amber);padding:12px 14px;background:#1b1712;color:#e8d5bc;border-radius:0 10px 10px 0;font-size:13px}
+.empty{color:var(--muted);font-size:13px;padding:6px 0}
+details summary{cursor:pointer;color:var(--muted);font-size:13px}
+.msg{font-size:12px;color:var(--green);min-height:18px;margin-top:8px}
+footer{margin-top:30px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:12px;text-align:center;letter-spacing:.08em}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(10,13,20,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:8px max(10px,env(safe-area-inset-left,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-right,0px));z-index:5}
+nav div{max-width:760px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+nav a{display:grid;gap:2px;justify-items:center;padding:7px 4px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:12px;font-weight:500}
+nav a svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav a.on{color:var(--cyan);background:#13202c}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+@media(max-width:560px){.biz{grid-template-columns:1fr}.pill{display:none}}
+@media(prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="brand"><div class="mark">AGX</div><div><div class="k">Centro de operaciones</div><h1>PROYECTO 911</h1></div></div>
+  <div class="pill">● Plan en construcción</div>
+</header>
+
+<!-- RESUMEN -->
+<section class="view" id="v-resumen">
+  <div class="k" style="margin-top:20px">Visión 2027</div>
+  <h2>Construir AGX.<br><span style="color:var(--cyan)">Crecer con estrategia.</span></h2>
+  <p class="muted" style="margin:0 0 18px">Negocios, fases y dinero en un solo lugar mientras avanzas hacia tu meta. Prioridad: desarrollar habilidades, validar ideas y crecer sin endeudarte.</p>
+
+  <div class="card goal">
+    <div class="label">Meta de referencia · Porsche 911 Carrera</div>
+    <div class="big" id="goalText">$2,628,000 MXN</div>
+    <div class="track"><div class="fill" id="fill911"></div></div>
+    <div class="row"><strong id="pct911">0%</strong><span class="muted" id="rem911"></span></div>
+    <div class="row muted" id="pace"></div>
+  </div>
+
+  <div class="card goalstep" style="margin-top:12px">
+    <div><div class="label">Primera meta de capital</div><b id="firstGoalTxt">$500 MXN</b></div>
+    <div style="flex:1;min-width:160px"><div class="track"><div class="fill" id="fill500"></div></div><div class="row"><span id="pct500" class="muted"></span></div></div>
+  </div>
+
+  <div class="stats" style="margin-top:12px">
+    <div class="stat"><span>Capital actual</span><strong id="sCap">$150</strong></div>
+    <div class="stat"><span>Ingresos acumulados</span><strong id="sInc">$0</strong></div>
+    <div class="stat"><span>Clientes / pedidos</span><strong id="sCli">0</strong></div>
+    <div class="stat"><span>Fases completadas</span><strong id="sPh">0 de 7</strong></div>
+  </div>
+  <div class="note" style="margin-top:14px">La barra compara tu capital con el precio de referencia; no es una probabilidad de compra. El precio puede cambiar y no incluye seguro, mantenimiento, impuestos ni otros gastos.</div>
+</section>
+
+<!-- NEGOCIOS -->
+<section class="view" id="v-negocios">
+  <div class="sec"><h3>Ecosistema AGX</h3><p>Un negocio a la vez; validar antes de escalar.</p></div>
+  <div class="biz">
+    <article class="card"><div class="tag">SERVICIOS · ARRANQUE</div><h4>AGX CREATIVE</h4><p>Edición de video para creadores, gamers y pequeños negocios.</p><ul><li>Reels, Shorts y TikToks</li><li>Subtítulos y edición dinámica</li><li>Anuncios de productos</li><li>Portafolio y clientes recurrentes</li></ul></article>
+    <article class="card"><div class="tag">PRODUCTOS DIGITALES</div><h4>AGX DIGITAL</h4><p>Recursos originales que se crean una vez y se venden varias veces.</p><ul><li>Packs de subtítulos</li><li>Plantillas para miniaturas</li><li>Planner para creadores</li><li>Recursos para streamers y guías</li></ul></article>
+    <article class="card"><div class="tag">COMERCIO · VALIDACIÓN</div><h4>AGX DROPS</h4><p>Catálogo variado con proveedores nacionales e internacionales.</p><ul><li>Soportes para teléfono/tablet</li><li>Mousepads gaming</li><li>Organizadores de escritorio</li><li>Lámparas LED y botellas reutilizables</li></ul></article>
+    <article class="card"><div class="tag">COMERCIO · SIGUIENTE ETAPA</div><h4>AGX REVENTA</h4><p>Compra y reventa responsable, empezando con categorías sencillas.</p><ul><li>Investigar demanda y precios</li><li>Comprobar autenticidad y estado</li><li>Calcular costos y margen</li><li>Publicar con fotos y descripción honestas</li></ul></article>
+    <article class="card"><div class="tag">LARGO PLAZO</div><h4>AGX AUTOS</h4><p>Reventa de autos solo con experiencia, capital y apoyo adulto.</p><ul><li>Aprender costos y documentación</li><li>Estudiar mercado y riesgos</li><li>Revisiones mecánicas profesionales</li><li>No comprometer dinero antes de tiempo</li></ul></article>
+    <article class="card"><div class="tag">MARCA Y COMUNIDAD</div><h4>AGX MEDIA</h4><p>Contenido para mostrar procesos y resultados, y construir comunidad.</p><ul><li>Publicaciones y casos de trabajo</li><li>Contenido gaming y entretenimiento</li><li>Testimonios reales con permiso</li><li>Identidad visual consistente</li></ul></article>
+  </div>
+</section>
+
+<!-- FASES -->
+<section class="view" id="v-fases">
+  <div class="sec"><h3>Fases del proyecto</h3><p id="phSummary">Marca las tareas conforme las completes.</p></div>
+  <div id="phases"></div>
+</section>
+
+<!-- FINANZAS -->
+<section class="view" id="v-finanzas">
+  <div class="sec"><h3>Control financiero</h3><p>Se guarda en este dispositivo.</p></div>
+  <div class="stats">
+    <div class="stat"><span>Capital actual</span><strong id="fCap">$150</strong></div>
+    <div class="stat"><span>Ingresos acumulados</span><strong id="fInc">$0</strong></div>
+    <div class="stat"><span>Gastos acumulados</span><strong id="fExp">$0</strong></div>
+    <div class="stat"><span>Ahorro neto</span><strong id="fNet">$0</strong></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h4 style="margin-bottom:12px">Registrar movimiento</h4>
+    <div class="seg" id="typeSeg" role="group" aria-label="Tipo de movimiento"><button type="button" class="sel" data-t="ingreso">Ingreso</button><button type="button" data-t="gasto">Gasto</button></div>
+    <div class="fields" style="margin-top:10px">
+      <div class="f"><label for="mAmt">Monto (MXN)</label><input id="mAmt" type="number" min="0" step="1" inputmode="decimal" placeholder="250"></div>
+      <div class="f"><label for="mDesc">Concepto</label><input id="mDesc" type="text" maxlength="60" placeholder="Edición de Reel"></div>
+    </div>
+    <div class="actions"><button class="primary" id="addMov" type="button">Agregar</button></div>
+    <div class="msg" id="movMsg" role="status"></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h4 style="margin-bottom:6px">Movimientos</h4>
+    <ul class="led" id="ledger"></ul>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h4 style="margin-bottom:12px">Clientes y pedidos</h4>
+    <div class="fields"><div class="f"><label for="cli">Completados</label><input id="cli" type="number" min="0" step="1" value="0"></div></div>
+    <p class="muted" style="font-size:12px;margin:10px 0 0">Los $150 MXN iniciales cuentan como capital, no como ingreso ganado.</p>
+  </div>
+
+  <div class="sec"><h3>Respaldo</h3><p>Copia tus datos para guardarlos fuera de la app.</p></div>
+  <div class="card">
+    <div class="actions" style="margin-top:0"><button id="copyBk" type="button">Copiar respaldo</button><button id="restoreBk" type="button">Restaurar desde texto</button></div>
+    <details style="margin-top:12px"><summary>Pegar respaldo para restaurar</summary><textarea id="bk" style="margin-top:8px" aria-label="Texto del respaldo"></textarea></details>
+    <div class="msg" id="bkMsg" role="status"></div>
+    <div class="actions"><button class="danger" id="reset" type="button">Restablecer todos los datos</button></div>
+    <div id="resetConfirm" hidden class="note" style="margin-top:10px">Se borrarán movimientos, clientes y tareas marcadas. <div class="actions"><button class="danger" id="resetYes" type="button">Sí, borrar todo</button><button id="resetNo" type="button">Cancelar</button></div></div>
+  </div>
+
+  <div class="sec"><h3>Reglas de crecimiento</h3></div>
+  <div class="note">No endeudarse para probar una idea. No pagar anuncios ni suscripciones antes de validar ventas. Verificar proveedores, costos totales, envíos y devoluciones. Usar materiales propios o con licencia. Al ser menor de edad, contar con un adulto de confianza para cuentas, pagos, acuerdos, obligaciones fiscales y disputas con clientes.</div>
+</section>
+
+<footer>AGX · CONSTANCIA SOBRE PRISA</footer>
+</div>
+
+<nav aria-label="Secciones"><div>
+  <a href="#resumen" data-v="resumen"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>Resumen</a>
+  <a href="#negocios" data-v="negocios"><svg viewBox="0 0 24 24"><path d="M3 8h18v12H3zM8 8V5h8v3"/></svg>Negocios</a>
+  <a href="#fases" data-v="fases"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Fases</a>
+  <a href="#finanzas" data-v="finanzas"><svg viewBox="0 0 24 24"><path d="M12 3v18M16 7.5c-.8-1-2.2-1.5-4-1.5-2.2 0-3.5 1-3.5 2.5S10 10.7 12 11c2 .3 3.5 1.200 3.500 2.700S14.200 16.500 12 16.500c-1.800 0-3.200-.6-4-1.700"/></svg>Finanzas</a>
+</div></nav>
+
+<script>
+const GOAL=2628000, BASE=150, FIRST=500, KEY='agx911_app';
+const phases=[
+["Fundación y orden","Definir prioridades, marca y control del dinero.",["Mantener el Proyecto 911 como panel central","Separar capital, ingresos y gastos","Definir horarios que no afecten la escuela","Preparar perfiles y presentación de AGX"]],
+["Lanzamiento de AGX CREATIVE","Empezar con el servicio de menor inversión y crear evidencia de calidad.",["Completar 4–5 piezas de portafolio","Definir paquetes, entregables y revisiones","Publicar ejemplos y contactar posibles clientes","Entregar el primer trabajo pagado y pedir permiso para mostrarlo"]],
+["Lanzamiento de AGX DIGITAL","Crear productos originales y comprobar si la gente los quiere.",["Crear el primer pack de subtítulos","Preparar muestras, descripción y entrega","Definir soporte y precio final","Conseguir primeras ventas y recopilar comentarios"]],
+["Validación de AGX DROPS","Investigar sin comprar inventario ni pagar anuncios al principio.",["Comparar proveedores nacionales e internacionales","Verificar costo total, envío y políticas por producto","Elegir solo 1–2 productos para una prueba controlada","Validar interés y pedidos con apoyo adulto"]],
+["Expansión de AGX REVENTA","Reinvertir con cuidado y aprender a calcular márgenes.",["Elegir una categoría de bajo riesgo","Comparar precios y demanda real","Calcular comisiones, entrega y devoluciones","Completar ventas transparentes y registrar resultados"]],
+["Consolidación y AGX AUTOS","Etapa futura: requiere capital, experiencia y revisión profesional.",["Mantener clientes recurrentes en servicios","Crear un fondo separado para expansión","Estudiar documentación y costos automotrices","Evaluar viabilidad con un adulto y profesionales"]],
+["Revisión de la meta 911","Medir el progreso real y ajustar la meta a la situación financiera.",["Revisar resultados cada semana","Calcular ahorro neto después de gastos","Investigar costos reales de propiedad y mantenimiento","Tomar decisiones sin deuda ni promesas poco realistas"]]
+];
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(n);
+let S={ledger:[],clients:0,checks:[]}, mType='ingreso';
+
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d&&typeof d==='object'){S.ledger=Array.isArray(d.ledger)?d.ledger:[];S.clients=+d.clients||0;S.checks=Array.isArray(d.checks)?d.checks:[]}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const sum=t=>S.ledger.filter(m=>m.t===t).reduce((a,m)=>a+m.amt,0);
+
+function monthsLeft(){const end=new Date(2027,6,1),now=new Date();return Math.max(0,(end-now)/(1000*60*60*24*30.44))}
+
+function render(){
+  const inc=sum('ingreso'),exp=sum('gasto'),cap=BASE+inc-exp,net=inc-exp;
+  const p911=cap/GOAL*100, p5=Math.min(100,cap/FIRST*100);
+  $('fill911').style.width=Math.min(100,Math.max(0,p911))+'%';
+  $('pct911').textContent=(p911<0.01?p911.toFixed(4):p911.toFixed(2))+'% de la meta';
+  $('rem911').textContent='Faltan '+money(Math.max(0,GOAL-cap));
+  const m=monthsLeft();
+  $('pace').textContent=m>0?`Hasta julio de 2027 quedan unos ${Math.round(m)} meses: necesitarías ahorrar ${money(Math.max(0,GOAL-cap)/m)} al mes.`:'';
+  $('fill500').style.width=Math.max(0,p5)+'%';
+  $('pct500').textContent=Math.round(Math.max(0,p5))+'% de la primera meta de capital';
+  ['sCap','fCap'].forEach(i=>$(i).textContent=money(cap));
+  ['sInc','fInc'].forEach(i=>$(i).textContent=money(inc));
+  $('fExp').textContent=money(exp);$('fNet').textContent=money(net);
+  $('sCli').textContent=S.clients;
+  const done=phases.filter((p,i)=>p[2].every((_,j)=>S.checks.includes(i+'-'+j))).length;
+  $('sPh').textContent=done+' de '+phases.length;
+  renderLedger();
+}
+function renderLedger(){
+  const ul=$('ledger');ul.textContent='';
+  if(!S.ledger.length){const li=document.createElement('li');li.className='empty';li.textContent='Aún no hay movimientos. Registra tu primer ingreso o gasto arriba.';ul.appendChild(li);return}
+  [...S.ledger].reverse().forEach(m=>{
+    const li=document.createElement('li');
+    const d=document.createElement('div');d.className='d';
+    const b=document.createElement('b');b.textContent=m.desc||(m.t==='ingreso'?'Ingreso':'Gasto');
+    const s=document.createElement('small');s.textContent=new Date(m.date).toLocaleDateString('es-MX',{day:'numeric',month:'short'});
+    d.append(b,s);
+    const r=document.createElement('div');r.style.cssText='display:flex;gap:10px;align-items:center';
+    const a=document.createElement('span');a.className='amt '+(m.t==='ingreso'?'in':'out');a.textContent=(m.t==='ingreso'?'+':'−')+money(m.amt);
+    const x=document.createElement('button');x.className='x';x.type='button';x.textContent='Quitar';x.setAttribute('aria-label','Quitar movimiento');
+    x.onclick=()=>{S.ledger=S.ledger.filter(k=>k.id!==m.id);save();render()};
+    r.append(a,x);li.append(d,r);ul.appendChild(li);
+  });
+}
+function renderPhases(){
+  $('phases').innerHTML=phases.map((p,i)=>{
+    const n=p[2].filter((_,j)=>S.checks.includes(i+'-'+j)).length,all=n===p[2].length;
+    return `<article class="card phase"><div class="ph"><div class="num ${all?'done':''}">${all?'✓':String(i+1).padStart(2,'0')}</div><h4>${p[0]}</h4><span class="meta">${n}/${p[2].length}</span></div><div class="desc">${p[1]}</div><div class="tasks">${p[2].map((t,j)=>`<label class="task"><input type="checkbox" data-k="${i}-${j}" ${S.checks.includes(i+'-'+j)?'checked':''}><span>${t}</span></label>`).join('')}</div></article>`;
+  }).join('');
+  const tot=phases.reduce((a,p)=>a+p[2].length,0);
+  $('phSummary').textContent=S.checks.length+' de '+tot+' tareas completadas';
+}
+$('phases').addEventListener('change',e=>{
+  const k=e.target.dataset.k;if(!k)return;
+  S.checks=e.target.checked?[...new Set([...S.checks,k])]:S.checks.filter(x=>x!==k);
+  save();renderPhases();render();
+});
+
+$('typeSeg').addEventListener('click',e=>{
+  const t=e.target.dataset.t;if(!t)return;mType=t;
+  [...$('typeSeg').children].forEach(b=>b.classList.toggle('sel',b.dataset.t===t));
+});
+$('addMov').onclick=()=>{
+  const amt=Math.round((+$('mAmt').value||0)*100)/100;
+  if(amt<=0){$('movMsg').style.color='var(--red)';$('movMsg').textContent='Escribe un monto mayor a 0.';return}
+  S.ledger.push({id:Date.now()+Math.random(),t:mType,amt,desc:$('mDesc').value.trim(),date:new Date().toISOString()});
+  $('mAmt').value='';$('mDesc').value='';
+  $('movMsg').style.color='var(--green)';$('movMsg').textContent=(mType==='ingreso'?'Ingreso':'Gasto')+' registrado.';
+  save();render();
+};
+$('cli').addEventListener('change',()=>{S.clients=Math.max(0,Math.floor(+$('cli').value||0));$('cli').value=S.clients;save();render()});
+
+$('copyBk').onclick=async()=>{
+  const txt=JSON.stringify(S);$('bk').value=txt;$('bk').closest('details').open=true;
+  try{await navigator.clipboard.writeText(txt);$('bkMsg').textContent='Respaldo copiado.'}
+  catch(e){$('bk').select();$('bkMsg').textContent='Selecciona y copia el texto de abajo.'}
+};
+$('restoreBk').onclick=()=>{
+  try{
+    const d=JSON.parse($('bk').value);
+    if(!d||!Array.isArray(d.ledger))throw 0;
+    S={ledger:d.ledger.filter(m=>m&&(m.t==='ingreso'||m.t==='gasto')&&+m.amt>0).map(m=>({id:m.id||Date.now()+Math.random(),t:m.t,amt:+m.amt,desc:String(m.desc||'').slice(0,60),date:m.date||new Date().toISOString()})),clients:Math.max(0,+d.clients||0),checks:Array.isArray(d.checks)?d.checks.map(String):[]};
+    save();$('cli').value=S.clients;renderPhases();render();$('bkMsg').style.color='var(--green)';$('bkMsg').textContent='Datos restaurados.';
+  }catch(e){$('bkMsg').style.color='var(--red)';$('bkMsg').textContent='El texto no es un respaldo válido.'}
+};
+$('reset').onclick=()=>{$('resetConfirm').hidden=false};
+$('resetNo').onclick=()=>{$('resetConfirm').hidden=true};
+$('resetYes').onclick=()=>{S={ledger:[],clients:0,checks:[]};try{localStorage.removeItem(KEY)}catch(e){}$('cli').value=0;$('resetConfirm').hidden=true;renderPhases();render()};
+
+function route(){
+  const v=['resumen','negocios','fases','finanzas'].includes(location.hash.slice(1))?location.hash.slice(1):'resumen';
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+load();$('cli').value=S.clients;renderPhases();render();route();
+</script>
